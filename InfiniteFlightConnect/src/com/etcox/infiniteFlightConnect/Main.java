@@ -26,17 +26,29 @@ public class Main {
     
     public void startConnection(String ip, int port) {
         try {
+        	
         	System.out.println("Starting Connection");
+        	
+        	// Create a socket on specified port an ip
 			clientSocket = new Socket(ip, port);
+			
+			// Get the outputstream from the socket (used to write data)
 			out = new DataOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-			input = new DataInputStream((clientSocket.getInputStream()));
+			
+			// Get the innputstream from the socket (used to read data); ; not being used right now
+			//input = new DataInputStream((clientSocket.getInputStream()));
+			
+			// Another form of getting data from the socket (one currently in use)
 	        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 	        
-	        //mana = getManafest();
+			// Put the strings into a string array list and
+			// May put it in an object in the future
+	        mana = getManafest();
 	        //getManafest();
 	       	        
-	        //sendMessage(635);
-	        //getResult();
+			//Send message of specified id. Does not take a variable in for the time being
+	        // **NOTE** 635 is NOT being sent to server, just for time being.
+	        sendMessage(635);
 	      
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -49,44 +61,40 @@ public class Main {
     	
     	System.out.println("Sending message");
     	
+    	// Could put a "throws" with the void but try/catch will work for now.
     	try{
     		
+    		// Send the data to the remote device (iPad Pro 2020 being used to test)
     		out.writeInt(1048649);
     		out.writeBoolean(false);
     		out.flush();
     		
+    		// Read the result, in a string, if applicable from the socket.
     		String line = in.readLine();
         	
+    		// If there is not a line, return null;
+    		// For some reason null does not seem to be a response from the InputStream.readLine().
         	if(line == null){
-        		System.out.println("Full Manafest Found; Finished Getting. (Null)");
         		return;
         	}
         	
+        	// If the line is not null, read it.
         	while(line != null){
+        		// Just printing to console for testing.
         		System.out.println(in.readLine());
-        		if(in.readLine().contains("635")){
-        			System.out.println("Full Manafest Found; Finished Getting.");
-        			return;
-        		}
         	}
-    		
     		
     	}catch(IOException e){
     		e.printStackTrace();
     	}
-    	
-
-        
-    }
-    
-    public String getResult() throws IOException {
-    	return null;
     }
     
     public ArrayList<String> getManafest(){
     
+    	// Define the list to return
     	ArrayList<String> toReturn = new ArrayList<String>();
     	
+    	// Could put a "throws" with the void but try/catch will work for now.
     	try{
     		
     		// Call API
@@ -97,15 +105,20 @@ public class Main {
         	// Get results
         	String line = in.readLine();
         	
+        	// Same with above, does not seem to recognize the end of the manifest, not a big issue right now.
         	if(line == null){
         		System.out.println("Full Manafest Found; Finished Getting. (Null)");
         		return toReturn;
         	}
         	
+        	// When there is data, add it to the list.
         	while(line != null){
         		System.out.println(in.readLine());
         		toReturn.add(in.readLine());
-        		if(in.readLine().contains("635")){
+        		
+        		// Temporary way to find end of manifest
+        		// Will add more solid way to find it in future
+        		if(in.readLine().contains("Engine.Stop")){
         			System.out.println("Full Manafest Found; Finished Getting.");
         			return toReturn;
         		}
@@ -119,6 +132,9 @@ public class Main {
     }
 
     public void stopConnection() {
+    	
+    	// close the connections and such
+    	
         try {
 			in.close();
 			out.close();
@@ -130,16 +146,17 @@ public class Main {
     }
 	
 	public static void main(String[] args) throws IOException{
-		
-		 //TestServer s = new TestServer();
-		 //s.startServer(51675);
-		
+	
+		 // find the devices ip, hard coded for now.
 		 InetAddress add = InetAddress.getByName("172.20.10.2");
 		
+		 // Get the UDP broadcast, does nothing really.
 		 UDPConnection sender = new UDPConnection(add.getHostAddress(), 15000);
 	     sender.start();
 		
+	     // Define a new one of these.
 		 Main m = new Main();
+		 // Start the connection
 		 m.startConnection(add.getHostAddress(), 10112);
 	     
 	}

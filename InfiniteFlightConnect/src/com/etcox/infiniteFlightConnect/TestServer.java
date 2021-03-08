@@ -9,6 +9,10 @@ import java.net.Socket;
 
 public class TestServer {
 
+	/**
+	 * THIS CLASS IS NOT BEING USED FOR THE TIME BEING.
+	 */
+	
 	private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
