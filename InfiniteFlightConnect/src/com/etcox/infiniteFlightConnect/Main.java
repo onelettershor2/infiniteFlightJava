@@ -50,8 +50,6 @@ public class Main {
 			// Put the strings into a string array list and
 			// May put it in an object in the future
 	        mani = getManafest();
-	        
-	        System.out.println(getManifestObjectFromID(1048649).getPath());
 	       	        
 			//Send message of specified id. Does not take a variable in for the time being
 	        // **NOTE** 635 is NOT being sent to server, just for time being.
