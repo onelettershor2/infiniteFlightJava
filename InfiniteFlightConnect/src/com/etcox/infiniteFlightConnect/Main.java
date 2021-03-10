@@ -1,31 +1,29 @@
 package com.etcox.infiniteFlightConnect;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
+//import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
 	private Socket clientSocket;
 	private DataOutputStream out;
-	private DataInputStream input;
+	//private DataInputStream input;
     private BufferedReader in;
 
-    ArrayList<String> mana; 
+    ArrayList<ManifestObject> mani; 
     
-    public Main(){
-    	
-    }
+    public Main() {}
     
     public void startConnection(String ip, int port) {
         try {
@@ -51,12 +49,14 @@ public class Main {
 	        
 			// Put the strings into a string array list and
 			// May put it in an object in the future
-	        mana = getManafest();
+	        mani = getManafest();
+	        
+	        System.out.println(getManifestObjectFromID(1048649).getPath());
 	       	        
 			//Send message of specified id. Does not take a variable in for the time being
 	        // **NOTE** 635 is NOT being sent to server, just for time being.
-	        sendMessage(635);
-	      
+	        //sendMessage(635);
+	        
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -70,17 +70,11 @@ public class Main {
     	try{
     		
     		// Send the data to the remote device (iPad Pro 2020 being used to test)
-    		
-    		out.writeInt(435);
+    		out.writeInt(1048649);
     		out.writeBoolean(false);
     		out.flush();
     		
-    		//out.writeInt(499);
-    		//out.writeBoolean(false);
-    		//out.flush();
-    		
     		// Read the result, in a string, if applicable from the socket.
-        	
     		while(true){
     			
     			System.out.println("about to read");
@@ -109,10 +103,10 @@ public class Main {
     	}
     }
     
-    public ArrayList<String> getManafest(){
+    public ArrayList<ManifestObject> getManafest(){
     
     	// Define the list to return
-    	ArrayList<String> toReturn = new ArrayList<String>();
+    	ArrayList<ManifestObject> toReturn = new ArrayList<ManifestObject>();
     	
     	// Could put a "throws" with the void but try/catch will work for now.
     	try{
@@ -122,10 +116,25 @@ public class Main {
         	out.writeBoolean(false);
         	out.flush();
         	
+        	int len = 0;
+        	boolean isFirstLine = true;
+        	
         	// While there are new lines to read...
         	while(true){
         		
         		// SocketTimeout will be thrown for the last line
+        		if(len == 0){
+        			int id = in.read();
+        			System.out.println(id);
+        			len += 1;
+        			continue;
+        		}else if (len == 1){
+        			int dataLength = in.read();
+        			System.out.println(dataLength);
+        			len = -1;
+        			continue;
+        		}
+        	
         		String l = in.readLine();
         		
         		// Never used; Timeout is thrown instead which returns the list.
@@ -135,36 +144,46 @@ public class Main {
         		}
         		
         		System.out.println(l);
-        		toReturn.add(l);
         		
-        	}
-        	
-        	
-        	//Obsolete now; will remove when known it will no longer be needed
-        	/*
-        	// Same with above, does not seem to recognize the end of the manifest, not a big issue right now.
-        	if(line == null){
-        		System.out.println("Full Manafest Found; Finished Getting. (Null)");
-        		return toReturn;
-        	}
-        	
-        	// When there is data, add it to the list.
-        	while(line != null){
-        		System.out.println(line);
-        		toReturn.add(line);
+        		String[] splitString = l.split(",", 3);
         		
-        		// Temporary way to find end of manifest
-        		// Will add more solid way to find it in future
-        		if(line.contains(".Stop")){
-        			System.out.println("Full Manafest Found; Finished Getting.");
-        			return toReturn;
+        		int putID = -1;
+        		int putType = -1;
+        		String putPath = null;
+        		
+        		int i = 0;
+        		
+        		for(String s : splitString){
+        			
+        			// First line contains "Specials" so we must filter them out
+        			if(isFirstLine) {
+        				
+        				// Make a pattern and match all specials
+        				Pattern p = Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE);
+        				Matcher m = p.matcher("�");
+        				boolean b = m.find();
+        				
+        				// If it contains specials, replace everything leaving only integers
+        				if(b){
+        					s = s.replaceAll("[^\\d.]", "");
+        				}
+        				
+        				isFirstLine = false;
+        			}
+        			
+        			if(i == 0) putID = Integer.parseInt(s);
+        			else if(i == 1) putType = Integer.parseInt(s);
+        			else if(i == 2) putPath = s;
+        			i+=1;
         		}
-        		//line = in.readLine();
-        		break;
+        		
+        		
+        		if(putID != -1 && putType != -1 && putPath != null){
+        			toReturn.add(new ManifestObject(putID, putType, putPath));
+        		}
+        		
         	}
-        	return toReturn;
-        	*/
-    		
+        	
     	}catch(SocketTimeoutException e){
     		
     		//Nothing more to read from the manifest
@@ -178,6 +197,58 @@ public class Main {
     		
     	}
     }
+   
+    /**
+     * Get a manifest object from the array list using an index
+     * @param index the index to return
+     * @return ManifestObject at specified index
+     */
+    public ManifestObject getManifestObject(int index){
+    	return mani.get(index);
+    }
+    
+    /**
+     * try and locate an object from a specific path
+     * @param path path to search for
+     * @return null or an object based on if there is a path or not
+     */
+    public ManifestObject getManifestObjectFromPath(String path){
+    	for(ManifestObject m : mani){
+    		if(m.getPath().equalsIgnoreCase(path)){
+    			return m;
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * try and locate an object from a specific id
+     * @param id id to search for
+     * @return null or an object based on if there is a path or not
+     */
+    public ManifestObject getManifestObjectFromID(int id){
+    	for(ManifestObject m : mani){
+    		if(m.getID() == id){
+    			return m;
+    		}
+    	}
+    	return null;
+    }
+    
+    /**
+     * try an locate an object from a specific type
+     * @param type type to search for
+     * @return null or an object based on if there is a path or not
+     */
+    public ManifestObject getManifestObjectFromType(int type){
+    	for(ManifestObject m : mani){
+    		if(m.getType() == type){
+    			return m;
+    		}
+    	}
+    	return null;
+    }
+    
 
     public void stopConnection() {
     	
