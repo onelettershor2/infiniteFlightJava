@@ -36,10 +36,10 @@ public class Main {
 			// Set the max time it (BufferedReader, in) can take to read data
 			clientSocket.setSoTimeout(1000);
 			
-			// Get the outputstream from the socket (used to write data)
+			// Get the output stream from the socket (used to write data)
 			out = new DataOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
 			
-			// Get the innputstream from the socket (used to read data); ; not being used right now
+			// Get the innput stream from the socket (used to read data); ; not being used right now
 			//input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
 			
 			// Another form of getting data from the socket (one currently in use)
@@ -50,10 +50,18 @@ public class Main {
 			// Put the strings into a string array list and
 			// May put it in an object in the future
 	        mani = getManafest();
+	        getManafest();
+	        
+	        ManifestObject o = getManifestObjectFromID(1048635);
+	        if(o == null){
+	        	System.out.println("null object");
+	        }else{
+	        	System.out.println(o.getPath());
+	        }
 	       	        
 			//Send message of specified id. Does not take a variable in for the time being
 	        // **NOTE** 635 is NOT being sent to server, just for time being.
-	        //sendMessage(635);
+	        sendMessage(635);
 	        
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -92,6 +100,7 @@ public class Main {
     		
     		// Catch the read time exception that is thrown if no data was read within time limit
     		System.out.println("There was not any data returned within the timelimit.");
+    		sendMessage(635);
     		
     	}catch(IOException e){
     		
@@ -145,8 +154,8 @@ public class Main {
         		
         		String[] splitString = l.split(",", 3);
         		
-        		int putID = -1;
-        		int putType = -1;
+        		int putID = -2;
+        		int putType = -2;
         		String putPath = null;
         		
         		int i = 0;
@@ -157,13 +166,14 @@ public class Main {
         			if(isFirstLine) {
         				
         				// Make a pattern and match all specials
+        				System.out.println("First line is here");
         				Pattern p = Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE);
         				Matcher m = p.matcher("�");
         				boolean b = m.find();
         				
         				// If it contains specials, replace everything leaving only integers
         				if(b){
-        					s = s.replaceAll("[^\\d.]", "");
+        					s = s.replaceAll("[^\\d.].", "");
         				}
         				
         				isFirstLine = false;
@@ -176,7 +186,7 @@ public class Main {
         		}
         		
         		
-        		if(putID != -1 && putType != -1 && putPath != null){
+        		if(putID != -2 && putType != -2 && putPath != null){
         			toReturn.add(new ManifestObject(putID, putType, putPath));
         		}
         		
@@ -251,7 +261,6 @@ public class Main {
     public void stopConnection() {
     	
     	// close the connections and such
-    	
         try {
 			in.close();
 			out.close();
