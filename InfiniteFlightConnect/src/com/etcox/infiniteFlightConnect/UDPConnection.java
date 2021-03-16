@@ -3,20 +3,17 @@ package com.etcox.infiniteFlightConnect;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 
 public class UDPConnection {
 
 	// Did not comment this one out because its not causing any issues right now
 	
 	private DatagramSocket udpSocket;
-    private InetAddress serverAddress;
     private int port;
     
-    public UDPConnection(String destinationAddr, int port) throws IOException {
+    public UDPConnection(int port) throws IOException {
     	
-        this.serverAddress = InetAddress.getByName(destinationAddr);
-        System.out.println("Obtaining information at: " + serverAddress.getHostAddress());
+        System.out.println("Obtaining information at 15000");
         this.port = port;
         udpSocket = new DatagramSocket(this.port);
         

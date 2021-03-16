@@ -1,15 +1,19 @@
 package com.etcox.infiniteFlightConnect;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 //import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,8 +22,9 @@ public class Main {
 
 	private Socket clientSocket;
 	private DataOutputStream out;
-	//private DataInputStream input;
+	private DataInputStream input;
     private BufferedReader in;
+    private EndianDataInputStream endianStream;
 
     ArrayList<ManifestObject> mani; 
     
@@ -34,13 +39,16 @@ public class Main {
 			clientSocket = new Socket(ip, port);
 			
 			// Set the max time it (BufferedReader, in) can take to read data
-			clientSocket.setSoTimeout(1000);
+			clientSocket.setSoTimeout(3000);
 			
 			// Get the output stream from the socket (used to write data)
 			out = new DataOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
 			
 			// Get the innput stream from the socket (used to read data); ; not being used right now
-			//input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+			input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+			
+			endianStream = new EndianDataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+			endianStream.order(ByteOrder.LITTLE_ENDIAN);
 			
 			// Another form of getting data from the socket (one currently in use)
 	        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -50,9 +58,8 @@ public class Main {
 			// Put the strings into a string array list and
 			// May put it in an object in the future
 	        mani = getManafest();
-	        getManafest();
 	        
-	        ManifestObject o = getManifestObjectFromID(1048635);
+	        ManifestObject o = getManifestObjectFromID(625);
 	        if(o == null){
 	        	System.out.println("null object");
 	        }else{
@@ -60,54 +67,84 @@ public class Main {
 	        }
 	       	        
 			//Send message of specified id. Does not take a variable in for the time being
-	        // **NOTE** 635 is NOT being sent to server, just for time being.
-	        sendMessage(635);
+	        //sendCommand(1048617);
+	        setState(336, 5);
+	        //getState(625);
 	        
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+		}catch(ConnectException e){
+			System.out.println("Could not make a socket connection");
+		}catch (UnknownHostException e) {
+			System.out.println("Could not connect to the host");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
-
-    public void sendMessage(int id) {    	
-    	
-    	System.out.println("Sending message");
+    
+    public void sendCommand(int id) {    	
     	try{
     		
-    		// Send the data to the remote device (iPad Pro 2020 being used to test)
-    		out.writeInt(1048649);
+    		out.writeInt(Integer.reverseBytes(id));
     		out.writeBoolean(false);
     		out.flush();
     		
-    		// Read the result, in a string, if applicable from the socket.
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    public void setState(int id, float val){
+    	try{
+    		out.writeInt(Integer.reverseBytes(id));
+    		out.writeBoolean(true);
+    		out.writeFloat(val);
+    		//out.writeInt();
+    		
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    public void getState(int id){
+    	
+    	boolean dataReturned = false;
+    	
+    	//ManifestObject obj = getManifestObjectFromID(id);
+    	//if(obj == null) return;
+    	
+    	try{
+    		
+    		//out.writeInt(Integer.reverseBytes(obj.getID()));
+    		out.writeInt(Integer.reverseBytes(id));
+    		out.writeBoolean(false);
+    		
     		while(true){
+			
+    			//System.out.println("here");
+    			System.out.println(endianStream.readInt());
+    			
+    			//input.readBoolean();
     			
     			System.out.println("about to read");
     			int l = in.read();
     			System.out.println("read");
+			
+    			dataReturned = true;
     			
     			// Will return a -1 if there is nothing to read
     			if(l == -1){
     				System.out.println("Nothing more to read");
     				return;
     			}
-    			System.out.println(l);
-    			
+				System.out.println(l);
+			
     		}
     		
     	}catch(SocketTimeoutException e){
-    		
-    		// Catch the read time exception that is thrown if no data was read within time limit
-    		System.out.println("There was not any data returned within the timelimit.");
-    		sendMessage(635);
-    		
+    		if(!dataReturned) System.out.println("No data was returned");
     	}catch(IOException e){
-    		
-    		//For any other uncaught errors
     		e.printStackTrace();
-    		
     	}
+    	
     }
     
     public ArrayList<ManifestObject> getManafest(){
@@ -235,6 +272,10 @@ public class Main {
      * @return null or an object based on if there is a path or not
      */
     public ManifestObject getManifestObjectFromID(int id){
+    	
+    	if(mani == null) return null;
+    	else if(mani.isEmpty()) return null;
+    	
     	for(ManifestObject m : mani){
     		if(m.getID() == id){
     			return m;
@@ -274,10 +315,10 @@ public class Main {
 	public static void main(String[] args) throws IOException{
 	
 		 // find the devices ip, hard coded for now.
-		 InetAddress add = InetAddress.getByName("192.168.4.89");
+		 InetAddress add = InetAddress.getByName("172.20.10.2");
 		
 		 // Get the UDP broadcast, does nothing really.
-		 UDPConnection sender = new UDPConnection(add.getHostAddress(), 15000);
+		 UDPConnection sender = new UDPConnection(15000);
 	     sender.start();
 		
 	     // Define a new one of these.
