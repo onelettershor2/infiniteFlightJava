@@ -14,6 +14,8 @@ import java.nio.ByteOrder;
  * Time: 4:39 PM
  */
 
+// This class was not made by me(Ethan)
+
 public class EndianDataInputStream extends InputStream implements DataInput {
     DataInputStream dataIn;
     private ByteBuffer buffer = ByteBuffer.allocate(8);
@@ -108,16 +110,13 @@ public class EndianDataInputStream extends InputStream implements DataInput {
     @Override
     public float readFloat() throws IOException {
         int tmp = readInt();
-        return Float.intBitsToFloat( tmp );
+        return Float.intBitsToFloat(tmp);
     }
 
     @Override
     public int readInt() throws IOException {
-    	System.out.println("Attempting read");
         buffer.clear();
-        System.out.println("Attempting read 1");
         buffer.order(ByteOrder.BIG_ENDIAN).putInt(dataIn.readInt()).flip();
-        System.out.println(order);
         return buffer.order(order).getInt();
     }
 

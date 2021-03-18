@@ -3,7 +3,6 @@ package com.etcox.infiniteFlightConnect;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 //import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,17 +17,18 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Main {
+import objects.DataObject;
+
+public class InfiniteFlightConnectAPI {
 
 	private Socket clientSocket;
 	private DataOutputStream out;
-	private DataInputStream input;
     private BufferedReader in;
     private EndianDataInputStream endianStream;
 
     ArrayList<ManifestObject> mani; 
     
-    public Main() {}
+    public InfiniteFlightConnectAPI() {}
     
     public void startConnection(String ip, int port) {
         try {
@@ -39,37 +39,47 @@ public class Main {
 			clientSocket = new Socket(ip, port);
 			
 			// Set the max time it (BufferedReader, in) can take to read data
-			clientSocket.setSoTimeout(3000);
+			clientSocket.setSoTimeout(1000);
 			
 			// Get the output stream from the socket (used to write data)
 			out = new DataOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
-			
-			// Get the innput stream from the socket (used to read data); ; not being used right now
-			input = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
 			
 			endianStream = new EndianDataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
 			endianStream.order(ByteOrder.LITTLE_ENDIAN);
 			
 			// Another form of getting data from the socket (one currently in use)
-	        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+	        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
 	        
 	        System.out.println("System made it here, so far.");
 	        
 			// Put the strings into a string array list and
 			// May put it in an object in the future
-	        mani = getManafest();
+	        mani = getManifest();
 	        
-	        ManifestObject o = getManifestObjectFromID(625);
+	        ManifestObject idObj = getManifestObjectFromPath("simulator/flight_time");
+	        
+	        int id = -1;
+	        		
+	        if(idObj != null) id = idObj.getID();
+	        //343
+	        //341
+	        //542
+	        
+	        ManifestObject o = getManifestObjectFromID(id);
 	        if(o == null){
 	        	System.out.println("null object");
 	        }else{
-	        	System.out.println(o.getPath());
+	        	System.out.println("Path: " + o.getPath());
+	        	System.out.println("ID: "+ o.getID());
+	        	System.out.println("Type: " + o.getType());
 	        }
 	       	        
 			//Send message of specified id. Does not take a variable in for the time being
-	        //sendCommand(1048617);
-	        setState(336, 5);
-	        //getState(625);
+	        //sendCommand(1048598);
+	        //sendCommand(1048600);
+	        //sendCommand(1048601);
+	        setState(id, "true");
+	        getState(id);
 	        
 		}catch(ConnectException e){
 			System.out.println("Could not make a socket connection");
@@ -92,62 +102,172 @@ public class Main {
     	}
     }
     
-    public void setState(int id, float val){
+    public void setState(int id, String toParse){
+    	
+    	ManifestObject obj = getManifestObjectFromID(id);
+    	if(obj == null) return;
+    	
+    	int toWriteType = obj.getType();
+    	
     	try{
     		out.writeInt(Integer.reverseBytes(id));
     		out.writeBoolean(true);
-    		out.writeFloat(val);
-    		//out.writeInt();
+    		
+    		try{
+    			if(toWriteType == 0){
+
+    				boolean write = Boolean.parseBoolean(toParse);
+        			out.writeBoolean(write);
+        			
+        		}else if(toWriteType == 1){
+        			
+        			int write = Integer.parseInt(toParse);
+        			System.out.println(write);
+        			out.writeInt(Integer.reverseBytes(write));
+        			
+        		}else if(toWriteType == 2){
+        			
+        			float write = Float.parseFloat(toParse);
+        			out.writeFloat(write);
+        			
+        		}else if(toWriteType == 3){
+        			
+        			double write = Double.parseDouble(toParse);
+        			out.writeDouble(write);
+        			
+        		}else if(toWriteType == 4){
+        			
+        			out.writeUTF(toParse);
+        			
+        		}else if(toWriteType == 5){
+        			
+        			long write = Long.parseLong(toParse);
+        			out.writeLong(Long.reverseBytes(write));
+        			
+        		}
+    		}catch(NumberFormatException e){
+    			System.out.println("Could not send data. An invalid data type was used");
+    			return;
+    		}
+    		
+    		out.flush();
+    		
+    		System.out.println("Set State: " + obj.getPath());
     		
     	}catch(IOException e){
     		e.printStackTrace();
     	}
     }
     
-    public void getState(int id){
+    public DataObject getState(int id){
     	
-    	boolean dataReturned = false;
-    	
-    	//ManifestObject obj = getManifestObjectFromID(id);
-    	//if(obj == null) return;
+    	if(id == -1){
+    		System.out.println("Dont send -1 to getState() please");
+    		return null;
+    	}
+    
+    	ManifestObject obj = getManifestObjectFromID(id);
+    	if(obj == null) return null;
     	
     	try{
     		
     		//out.writeInt(Integer.reverseBytes(obj.getID()));
     		out.writeInt(Integer.reverseBytes(id));
     		out.writeBoolean(false);
+    		out.flush();
     		
     		while(true){
 			
+    			int echoID = -1 ;
+    			int echoLength = -1;
+    			int echoLengthString = -1;
+    			
     			//System.out.println("here");
-    			System.out.println(endianStream.readInt());
-    			
-    			//input.readBoolean();
-    			
-    			System.out.println("about to read");
-    			int l = in.read();
-    			System.out.println("read");
-			
-    			dataReturned = true;
-    			
-    			// Will return a -1 if there is nothing to read
-    			if(l == -1){
-    				System.out.println("Nothing more to read");
-    				return;
+    			for(int i = 0; i < 3; i++){
+    				if(i == 0) echoID = endianStream.readInt();
+    				else if(i == 1) echoLength = endianStream.readInt();
+    				else if(i == 2 && obj.getType() == 4) echoLengthString = endianStream.readInt();
     			}
-				System.out.println(l);
-			
+    			
+    			System.out.println("Echo ID: " + echoID);
+    			System.out.println("Echo Length: " + echoLength);
+    			System.out.println("Echo Length For String: " + echoLengthString);
+    			
+    			if(obj.getType() == 0){
+    				
+    				boolean data = endianStream.readBoolean();
+    				
+    				System.out.println(data);
+    				return new DataObject(data);
+    				
+    			}else if (obj.getType() == 1){
+    				
+    				int data = endianStream.readInt();
+    				
+    				System.out.println(data);
+    				return new DataObject(data);
+    				
+    			}else if (obj.getType() == 2){
+    				
+    				byte[] bytes = new byte[4];
+    		        @SuppressWarnings("unused")
+					int len;
+
+    		        while ((len = endianStream.read(bytes)) > 0) {
+    		        	int bits = (bytes[0] & 0xFF) 
+    		                    | ((bytes[1] & 0xFF) << 8) 
+    		                    | ((bytes[2] & 0xFF) << 16) 
+    		                    | ((bytes[3] & 0xFF) << 24);
+    		            
+    		            float data = Float.intBitsToFloat(bits);
+    		            System.out.println("Data: " + data);
+    		            return new DataObject(data);
+    		        }
+    				
+    				float data = endianStream.readFloat();
+    				System.out.println(data);
+    				return new DataObject(data);
+    				
+    			}else if (obj.getType() == 3){
+    				
+    				double data = endianStream.readDouble();
+    				System.out.println(data);
+    				return new DataObject(data);
+    				
+    			}else if (obj.getType() == 4){
+    				byte[] bytes = new byte[echoLengthString];
+    		        int len;
+
+    		        while ((len = endianStream.read(bytes)) > 0) {
+    		            String data = new String(bytes, 0, len);
+    		            System.out.println("Data: " + data);
+    		            return new DataObject(data);
+    		        }
+    	 
+    			}else if (obj.getType() == 5){
+    				
+    				long data = endianStream.readLong();
+    				System.out.println(data);
+    				return new DataObject(data);
+    				
+    			}else{
+    				
+    				System.out.println("Not supported");
+    				return new DataObject();
+    				
+    			}
     		}
     		
     	}catch(SocketTimeoutException e){
-    		if(!dataReturned) System.out.println("No data was returned");
+    		System.out.println("No data was returned");
     	}catch(IOException e){
     		e.printStackTrace();
     	}
     	
+    	return new DataObject();
     }
     
-    public ArrayList<ManifestObject> getManafest(){
+    public ArrayList<ManifestObject> getManifest(){
     
     	// Define the list to return
     	ArrayList<ManifestObject> toReturn = new ArrayList<ManifestObject>();
@@ -160,32 +280,27 @@ public class Main {
         	out.writeBoolean(false);
         	out.flush();
         	
-        	int len = 0;
         	boolean isFirstLine = true;
+        	
+        	@SuppressWarnings("unused")
+			int echoID = -1;
+        	int dataLength = -1;
+        	
+        	for(int i = 0; i < 2; i++){
+    			if(i == 0) echoID = in.read();
+    			else if(i == 1) dataLength = in.read();
+    		}
         	
         	// While there are new lines to read...
         	while(true){
-        		
-        		// SocketTimeout will be thrown for the last line
-        		if(len == 0){
-        			int id = in.read();
-        			System.out.println(id);
-        			len += 1;
-        			continue;
-        		}else if (len == 1){
-        			int dataLength = in.read();
-        			System.out.println(dataLength);
-        			len = -1;
-        			continue;
-        		}
         	
-        		String l = in.readLine();
-        		
-        		// Never used; Timeout is thrown instead which returns the list.
-        		if(l == null){
-        			System.out.println("Full Manafest Found; Finished Getting.");
-        			return toReturn;
+        		if(dataLength == -1){
+        			System.out.println("There was an issue getting the manifest, will retry.");
+        			mani = getManifest();
+        			return null;
         		}
+        		
+        		String l = in.readLine();
         		
         		System.out.println(l);
         		
@@ -216,10 +331,15 @@ public class Main {
         				isFirstLine = false;
         			}
         			
-        			if(i == 0) putID = Integer.parseInt(s);
-        			else if(i == 1) putType = Integer.parseInt(s);
-        			else if(i == 2) putPath = s;
-        			i+=1;
+        			try{
+        				if(i == 0) putID = Integer.parseInt(s);
+        				else if(i == 1) putType = Integer.parseInt(s);
+        				else if(i == 2) putPath = s;
+        				i+=1;
+        			}catch(NumberFormatException e){
+        				System.out.println("Misread a line of the manifest.");
+        			}
+        			
         		}
         		
         		
@@ -298,9 +418,8 @@ public class Main {
     	return null;
     }
     
-
+    // Not used locally, could be used externally though if needed. 
     public void stopConnection() {
-    	
     	// close the connections and such
         try {
 			in.close();
@@ -320,10 +439,7 @@ public class Main {
 		 // Get the UDP broadcast, does nothing really.
 		 UDPConnection sender = new UDPConnection(15000);
 	     sender.start();
-		
-	     // Define a new one of these.
-		 Main m = new Main();
-		 // Start the connection
+	     InfiniteFlightConnectAPI m = new InfiniteFlightConnectAPI();
 		 m.startConnection(add.getHostAddress(), 10112);
 	     
 	}
