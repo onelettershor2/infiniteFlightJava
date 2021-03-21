@@ -1,4 +1,4 @@
-package objects;
+package com.etcox.infiniteFlightConnect.objects;
 
 public class DataObject {
 

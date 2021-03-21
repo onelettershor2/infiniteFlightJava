@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import objects.DataObject;
-import objects.ManifestObject;
+import com.etcox.infiniteFlightConnect.objects.DataObject;
+import com.etcox.infiniteFlightConnect.objects.ManifestObject;
 
 public class InfiniteFlightConnectAPI {
 
