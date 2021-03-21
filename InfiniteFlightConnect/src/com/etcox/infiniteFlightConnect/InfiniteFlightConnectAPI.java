@@ -8,16 +8,17 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import objects.DataObject;
+import objects.ManifestObject;
 
 public class InfiniteFlightConnectAPI {
 
@@ -39,9 +40,9 @@ public class InfiniteFlightConnectAPI {
 			clientSocket = new Socket(ip, port);
 			
 			// Set the max time it (BufferedReader, in) can take to read data
-			clientSocket.setSoTimeout(1000);
+			clientSocket.setSoTimeout(2000);
 			
-			// Get the output stream from the socket (used to write data)
+		    // Get the output stream from the socket (used to write data)
 			out = new DataOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
 			
 			endianStream = new EndianDataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
@@ -56,7 +57,10 @@ public class InfiniteFlightConnectAPI {
 			// May put it in an object in the future
 	        mani = getManifest();
 	        
-	        ManifestObject idObj = getManifestObjectFromPath("simulator/flight_time");
+	        sendCommand(1048598);
+	        
+	        /*
+	        ManifestObject idObj = getManifestObjectFromPath("aircraft/0/systems/signs/seatbelt");
 	        
 	        int id = -1;
 	        		
@@ -75,11 +79,13 @@ public class InfiniteFlightConnectAPI {
 	        }
 	       	        
 			//Send message of specified id. Does not take a variable in for the time being
-	        //sendCommand(1048598);
-	        //sendCommand(1048600);
-	        //sendCommand(1048601);
+	        sendCommand(1048598);
+	        sendCommand(1048600);
+	        sendCommand(1048601);
+	        sendCommand(1048649);
 	        setState(id, "true");
 	        getState(id);
+	        */
 	        
 		}catch(ConnectException e){
 			System.out.println("Could not make a socket connection");
@@ -90,6 +96,10 @@ public class InfiniteFlightConnectAPI {
 		}
     }
     
+    /**
+     * Send a command to the Infinite Flight client; This is sort of old an unreliable but it works
+     * @param id Command ID to send
+     */
     public void sendCommand(int id) {    	
     	try{
     		
@@ -102,6 +112,22 @@ public class InfiniteFlightConnectAPI {
     	}
     }
     
+    /**
+     * Set a state to the Infinite Flight client
+     * @param id the path of the state to set
+     * @param toParse The corresponding datatype of the ID in it's string format (Is parsed into the correct type automatically)
+     */
+    public void setState(String path, String toParse){
+    	ManifestObject obj = getManifestObjectFromPath(path);
+    	if(obj == null) return;
+    	setState(obj.getID(), toParse);
+    }
+    
+    /**
+     * Set a state to the Infinite Flight client
+     * @param id the ID of the state to set
+     * @param toParse The corresponding datatype of the ID in it's string format (Is parsed into the correct type automatically)
+     */
     public void setState(int id, String toParse){
     	
     	ManifestObject obj = getManifestObjectFromID(id);
@@ -122,12 +148,11 @@ public class InfiniteFlightConnectAPI {
         		}else if(toWriteType == 1){
         			
         			int write = Integer.parseInt(toParse);
-        			System.out.println(write);
         			out.writeInt(Integer.reverseBytes(write));
         			
         		}else if(toWriteType == 2){
         			
-        			float write = Float.parseFloat(toParse);
+        			float write = reverseFloat(Float.parseFloat(toParse));
         			out.writeFloat(write);
         			
         		}else if(toWriteType == 3){
@@ -152,13 +177,27 @@ public class InfiniteFlightConnectAPI {
     		
     		out.flush();
     		
-    		System.out.println("Set State: " + obj.getPath());
-    		
     	}catch(IOException e){
     		e.printStackTrace();
     	}
     }
     
+    /**
+     * Get a state from the API
+     * @param path the path of the state to retrive
+     * @return a DataObject which holds the corresponding value
+     */
+    public DataObject getState(String path){
+    	ManifestObject obj = getManifestObjectFromPath(path);
+    	if(obj == null) return new DataObject();
+    	return getState(obj.getID());
+    }
+    
+    /**
+     * Get a state from the API
+     * @param id the ID of the state to retrive
+     * @return a DataObject which holds the corresponding value
+     */
     public DataObject getState(int id){
     	
     	if(id == -1){
@@ -267,6 +306,10 @@ public class InfiniteFlightConnectAPI {
     	return new DataObject();
     }
     
+    /**
+     * Gets the manifest from the API via TCP
+     * @return and ArrayList of ManifestObjects, if there are no errors
+     */
     public ArrayList<ManifestObject> getManifest(){
     
     	// Define the list to return
@@ -291,7 +334,6 @@ public class InfiniteFlightConnectAPI {
     			else if(i == 1) dataLength = in.read();
     		}
         	
-        	// While there are new lines to read...
         	while(true){
         	
         		if(dataLength == -1){
@@ -301,8 +343,6 @@ public class InfiniteFlightConnectAPI {
         		}
         		
         		String l = in.readLine();
-        		
-        		System.out.println(l);
         		
         		String[] splitString = l.split(",", 3);
         		
@@ -418,10 +458,48 @@ public class InfiniteFlightConnectAPI {
     	return null;
     }
     
+    public float convertMetersPerSecondToFeetPerMinute(float ms){
+    	return ms*196.85f;
+    }
+    
+    public float convertMetersPerSecondToKnots(float ms){
+    	return ms*1.94384f;
+    }
+    
+    public int convertRadianToDegree(float r){
+    	float val = r*57.29580406904963f;
+    	return Math.round(val);
+    }
+    
+    public float convertKGSToLBS(float kgs){
+    	return kgs*2.20462f;
+    }
+    
+    public float convertDegreeToRadian(float d){
+    	return d*0.0174533f;
+    }
+    
+    /**
+     * Converts a Big Endian float into a Little Endian float which is needed to communicate with the API
+     * @param f the float value to convert
+     * @return a Little Endian float
+     */
+    public static float reverseFloat (float f) {
+        ByteBuffer buf = ByteBuffer.allocate(8);
+        buf.order(ByteOrder.BIG_ENDIAN);
+        buf.putFloat(f);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+        return buf.getFloat(0);
+    }
+    
     // Not used locally, could be used externally though if needed. 
+    /**
+     * Stop the socket connection
+     */
     public void stopConnection() {
     	// close the connections and such
         try {
+        	System.out.println("Stopping the connection");
 			in.close();
 			out.close();
 	        clientSocket.close();
@@ -430,18 +508,4 @@ public class InfiniteFlightConnectAPI {
 			e.printStackTrace();
 		}
     }
-	
-	public static void main(String[] args) throws IOException{
-	
-		 // find the devices ip, hard coded for now.
-		 InetAddress add = InetAddress.getByName("172.20.10.2");
-		
-		 // Get the UDP broadcast, does nothing really.
-		 UDPConnection sender = new UDPConnection(15000);
-	     sender.start();
-	     InfiniteFlightConnectAPI m = new InfiniteFlightConnectAPI();
-		 m.startConnection(add.getHostAddress(), 10112);
-	     
-	}
-	
 }

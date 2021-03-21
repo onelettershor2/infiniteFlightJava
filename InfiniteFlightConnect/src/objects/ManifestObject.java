@@ -1,4 +1,4 @@
-package com.etcox.infiniteFlightConnect;
+package objects;
 
 public class ManifestObject {
 
