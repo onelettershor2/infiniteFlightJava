@@ -1,6 +1,10 @@
 # Infinite Flight Connect API - For Java
 This repo will allow you to connect to the Infinite Flight Connect API (Connect API) in Java with ease.
 
+First, and most important, here is some documentation that is somewhat essential to understanding all of this:
+- [Infinite Flight Connect API V2 Docs](https://infiniteflight.com/guide/developer-reference/connect-api/version-2)
+- [Paths and their types](https://github.com/flyingdevelopmentstudio/infiniteflight-api)
+
 ## How to use in an Eclipse project
 Implementing this into your project is quite simple!
 
