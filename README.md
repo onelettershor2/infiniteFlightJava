@@ -5,6 +5,41 @@ First, and most important, here is some documentation that is somewhat essential
 - [Infinite Flight Connect API V2 Docs](https://infiniteflight.com/guide/developer-reference/connect-api/version-2)
 - [Paths and their types](https://github.com/flyingdevelopmentstudio/infiniteflight-api)
 
+<table>
+<thead>
+<tr>
+<th>Integer</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Integer (32-bit)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Float</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Double</td>
+</tr>
+<tr>
+<td>4</td>
+<td>String</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Long</td>
+</tr>
+</tbody>
+</table>
+
 ## How to use in an Eclipse project
 Implementing this into your project is quite simple!
 
