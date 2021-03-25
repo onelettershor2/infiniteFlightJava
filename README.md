@@ -44,6 +44,10 @@ First, and most important, here is some documentation that is somewhat essential
 ## How to use in an Eclipse project
 Implementing this into your project is quite simple!
 
+### Dependencies 
+This project is dependent on [this](https://search.maven.org/remotecontent?filepath=org/json/json/20210307/json-20210307.jar) (JSON for Java)
+Add this using the steps below:
+
 1. Download the .jar file which will be needed to refrence this repo. **If you need help with this, view [this](#getting-a-jar-file)**
 2. - Under **_Package Explorer_** right click the project you would like to use this in.
    - Hover ```Build Path -> Configure Build Path```
