@@ -14,7 +14,9 @@ import java.nio.ByteOrder;
  * Time: 4:39 PM
  */
 
-// This class was not made by me(Ethan)
+// This class was not made by me (OneLetterShor2)
+// Link to source: https://gist.github.com/MichaelBeeu/6545110
+// Little modifications have been made to suit this project
 
 public class EndianDataInputStream extends InputStream implements DataInput {
     DataInputStream dataIn;

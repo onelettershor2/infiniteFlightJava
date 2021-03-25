@@ -11,6 +11,7 @@ public class DataObject {
 	
 	private int dataType = -1;
 	
+	// all init stuff
 	public DataObject(){}
 	
 	public DataObject(boolean data){
@@ -42,6 +43,8 @@ public class DataObject {
 		this.dataLong = data;
 		dataType = 5;
 	}
+	
+	// getters 
 	
 	public int getDataType(){
 		return dataType;

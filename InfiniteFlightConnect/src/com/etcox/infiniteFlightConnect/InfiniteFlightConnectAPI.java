@@ -3,7 +3,6 @@ package com.etcox.infiniteFlightConnect;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-//import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,10 +26,9 @@ public class InfiniteFlightConnectAPI {
     private BufferedReader in;
     private EndianDataInputStream endianStream;
 
-    ArrayList<ManifestObject> mani;
+    private ArrayList<ManifestObject> mani;
 
-    public InfiniteFlightConnectAPI() {
-    }
+    public InfiniteFlightConnectAPI() {}
 
     public void startConnection(String ip, int port) {
         try {
@@ -46,12 +44,11 @@ public class InfiniteFlightConnectAPI {
             endianStream = new EndianDataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
             endianStream.order(ByteOrder.LITTLE_ENDIAN);
 
-            // Another form of getting data from the socket (one currently in
-            // use)
+            // Another form of getting data from the socket (one currently in use)
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
             
             // Put the strings into a string array list and
-            // May put it in an object in the future
+            // may put it in an object in the future
             mani = getManifest();
 
         } catch (ConnectException e) {
@@ -64,9 +61,8 @@ public class InfiniteFlightConnectAPI {
     }
 
     /**
-     * Send a command to the Infinite Flight client; This is sort of old an
-     * unreliable but it works
-     * 
+     * Send a command to the Infinite Flight client; This is sort of old and
+     * unreliable, on Infinite Flight's part, but it works
      * @param id Command ID to send
      */
     public void sendCommand(int id) {
@@ -266,7 +262,8 @@ public class InfiniteFlightConnectAPI {
             }
 
         } catch (SocketTimeoutException e) {
-            System.out.println("No data was returned (Socket timed out)");
+            // This is normal to catch, don't be alarmed by the logging, unless no data is returning
+            System.out.println("(Socket timed out)");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -283,7 +280,6 @@ public class InfiniteFlightConnectAPI {
         // Define the list to return
         ArrayList<ManifestObject> toReturn = new ArrayList<ManifestObject>();
 
-        // Could put a "throws" with the void but try/catch will work for now.
         try {
 
             // Call API
@@ -415,7 +411,8 @@ public class InfiniteFlightConnectAPI {
     }
 
     /**
-     * try an locate an object from a specific type
+     * try and locate an object from a specific type
+     * 
      * @param type to search for
      * @return null or an object based on if there is a path or not
      */
@@ -465,7 +462,7 @@ public class InfiniteFlightConnectAPI {
         return buf.getFloat(0);
     }
 
-    // Not used locally, could be used externally though if needed.
+    // Not used locally, could be used externally though if needed. (Have not tested this)
     /**
      * Stop the socket connection
      */
