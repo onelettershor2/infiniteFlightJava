@@ -29,7 +29,7 @@ To help with this, I included some static methods to convert. <br>
 - convertDegreeToRadian(float d)
 ```
 
-### Endpoints that may need converting
+## Endpoints that may need converting
 Here are some of the endpoints I have found are easier to use when converted
 
 | Endpoint        | Short Name           | Conversion  |
@@ -41,7 +41,7 @@ Here are some of the endpoints I have found are easier to use when converted
 
 **Of course these are not all of them, just some examples**
 
-### Extra info
+## Extra info
 So... Java does not, by default, send format in the Little Endian format, which is what the Connect API **_requires_** to send and get data. To get around this, you have to do some low level stuff. To save some time, and keep me half-sain, I used a file from [here](https://gist.github.com/MichaelBeeu/6545110). Credit to the creator for the useful converter. The JSON for Java library was also not created by me. (The only need for it is to get the IP from the JSON returned in the UDP broadcast) <br>
 - If you would like to contribute to this project, feel free to! 
 - I will try my best to continue and update this when I feel needed 
