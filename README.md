@@ -1,7 +1,7 @@
 # Infinite Flight Connect API - For Java
 This repo will allow you to connect to the Infinite Flight Connect API (Connect API) in Java with ease.
 
-## How to install into an Eclipse project
+## How to use in an Eclipse project
 Implementing this into your project is quite simple!
 
 1. Download the .jar file which will be needed to refrence this repo. **If you need help with this, view [this](#How-to-install)**
@@ -10,8 +10,23 @@ Implementing this into your project is quite simple!
    - Under **_Libraries_** tab... ```Add External JARs```
    - Find this repo's .jar file
    - Press **_OK_** then your done!
+   - Still need more help? Visit [this](https://www.tutorialspoint.com/eclipse/eclipse_java_build_path.htm) page for a little more explanation
 
+3. You are almost done! View the example code under the **example** branch to see the basic setup.
 
+## More Documentation
+So ontop of the basic getting of data, I included some more methods to ease the conversion proccess of data. (The API returns some not so normal numbers ex: m/s, radians, etc.)
+
+To help with this, I included some static methods to convert. **_Note: conversions are based on formulas Google uses_**
+
+```
+- convertMetersPerSecondToFeetPerMinute(float ms)
+- convertMetersPerSecondToKnots(float ms)
+- convertRadianToDegree(float r)
+- convertKGSToLBS(float kgs)
+- convertDegreeToRadian(float d)
+
+```
 
 
 
