@@ -42,7 +42,7 @@ Here are some of the endpoints I have found are easier to use when converted
 **Of course these are not all of them, just some examples**
 
 ### Extra info
-So... Java does not, by default, send data in the Little Endian format. To get around this, you have to do some low level stuff. To save some time, and keep me half-sain, I used a file from [here]. Credit to the creator for the useful converter. The JSON for Java library was also not created by me. (The only need for it is to get the IP from the JSON returned in the UDP broadcast)
+So... Java does not, by default, send data in the Little Endian format, which is what the Connect API **_requires_** to send and get data. To get around this, you have to do some low level stuff. To save some time, and keep me half-sain, I used a file from [here]. Credit to the creator for the useful converter. The JSON for Java library was also not created by me. (The only need for it is to get the IP from the JSON returned in the UDP broadcast)
 
 ### Getting a .jar file
 
