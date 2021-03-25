@@ -17,7 +17,9 @@ Implementing this into your project is quite simple!
 ## More Documentation
 So ontop of the basic getting of data, I included some more methods to ease the conversion proccess of data. (The API returns some not so normal numbers ex: m/s, radians, etc.)
 
-To help with this, I included some static methods to convert. **_Note: conversions are based on formulas Google uses_**
+To help with this, I included some static methods to convert. 
+**_Note: conversions are based on formulas Google uses_**
+**_Another Note: sorry if you were hoping for metric conversions, but I did these all based off Imperial_**
 
 ```
 - convertMetersPerSecondToFeetPerMinute(float ms)
@@ -25,8 +27,10 @@ To help with this, I included some static methods to convert. **_Note: conversio
 - convertRadianToDegree(float r)
 - convertKGSToLBS(float kgs)
 - convertDegreeToRadian(float d)
-
 ```
+
+### Endpoints that may need converting
+Here are some of the endpoints I have found are easier to use when converted
 
 
 
