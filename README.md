@@ -42,7 +42,10 @@ Here are some of the endpoints I have found are easier to use when converted
 **Of course these are not all of them, just some examples**
 
 ### Extra info
-So... Java does not, by default, send format in the Little Endian format, which is what the Connect API **_requires_** to send and get data. To get around this, you have to do some low level stuff. To save some time, and keep me half-sain, I used a file from [here](https://gist.github.com/MichaelBeeu/6545110). Credit to the creator for the useful converter. The JSON for Java library was also not created by me. (The only need for it is to get the IP from the JSON returned in the UDP broadcast) 
+So... Java does not, by default, send format in the Little Endian format, which is what the Connect API **_requires_** to send and get data. To get around this, you have to do some low level stuff. To save some time, and keep me half-sain, I used a file from [here](https://gist.github.com/MichaelBeeu/6545110). Credit to the creator for the useful converter. The JSON for Java library was also not created by me. (The only need for it is to get the IP from the JSON returned in the UDP broadcast) <br>
+- If you would like to contribute to this project, feel free to! 
+- I will try my best to continue and updatet this when I feel needed 
+- If you have any issues please don't hesitate to ask me on the [Infinite Flight Community](https://community.infiniteflight.com/u/onelettershor2/) or open an issue here on GitHub.
 
 ### Getting a .jar file
 Need extra help getting the .jar? Check [this](https://stackoverflow.com/questions/41310629/how-to-download-jar-file-from-github-source-code) out! If you still need help message me on the [Infinite Flight Community](https://community.infiniteflight.com/u/onelettershor2/)
