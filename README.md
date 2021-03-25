@@ -8,6 +8,8 @@ Implementing this into your project is quite simple!
 2. - Under **_Package Explorer_** right click the project you would like to use this in.
    - Hover ```Build Path -> Configure Build Path```
    - Under **_Libraries_** tab... ```Add External JARs```
+   - Find this repo's .jar file
+   - Press **_OK_** then your done!
 
 
 
