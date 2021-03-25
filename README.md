@@ -4,7 +4,7 @@ This repo will allow you to connect to the Infinite Flight Connect API (Connect 
 ## How to use in an Eclipse project
 Implementing this into your project is quite simple!
 
-1. Download the .jar file which will be needed to refrence this repo. **If you need help with this, view [this](#Getting-a-.jar-file)**
+1. Download the .jar file which will be needed to refrence this repo. **If you need help with this, view [this](#getting-a-jar-file)**
 2. - Under **_Package Explorer_** right click the project you would like to use this in.
    - Hover ```Build Path -> Configure Build Path```
    - Under **_Libraries_** tab... ```Add External JARs```
