@@ -196,6 +196,7 @@ public class InfiniteFlightConnectAPI {
      * @param id the ID of the state to get
      * @return a DataObject which holds the corresponding value
      */
+    @SuppressWarnings("unused")
     public DataObject getState(int id) {
 
         if (id == -1) {
@@ -209,7 +210,6 @@ public class InfiniteFlightConnectAPI {
 
         try {
 
-            // out.writeInt(Integer.reverseBytes(obj.getID()));
             out.writeInt(Integer.reverseBytes(id));
             out.writeBoolean(false);
             out.flush();
@@ -219,8 +219,7 @@ public class InfiniteFlightConnectAPI {
                 int echoID = -1;
                 int echoLength = -1;
                 int echoLengthString = -1;
-
-                // System.out.println("here");
+                
                 for (int i = 0; i < 3; i++) {
                     if (i == 0)
                         echoID = endianStream.readInt();
@@ -230,28 +229,23 @@ public class InfiniteFlightConnectAPI {
                         echoLengthString = endianStream.readInt();
                 }
 
-                System.out.println("Echo ID: " + echoID);
-                System.out.println("Echo Length: " + echoLength);
-                System.out.println("Echo Length For String: " + echoLengthString);
+                //System.out.println("Echo ID: " + echoID);
+                //System.out.println("Echo Length: " + echoLength);
+                //System.out.println("Echo Length For String: " + echoLengthString);
 
                 if (obj.getType() == 0) {
 
                     boolean data = endianStream.readBoolean();
-
-                    System.out.println(data);
                     return new DataObject(data);
 
                 } else if (obj.getType() == 1) {
 
                     int data = endianStream.readInt();
-
-                    System.out.println(data);
                     return new DataObject(data);
 
                 } else if (obj.getType() == 2) {
 
                     byte[] bytes = new byte[4];
-                    @SuppressWarnings("unused")
                     int len;
 
                     while ((len = endianStream.read(bytes)) > 0) {
@@ -259,46 +253,40 @@ public class InfiniteFlightConnectAPI {
                                 | ((bytes[3] & 0xFF) << 24);
 
                         float data = Float.intBitsToFloat(bits);
-                        System.out.println("Data: " + data);
                         return new DataObject(data);
                     }
-
-                    float data = endianStream.readFloat();
-                    System.out.println(data);
-                    return new DataObject(data);
 
                 } else if (obj.getType() == 3) {
 
                     double data = endianStream.readDouble();
-                    System.out.println(data);
                     return new DataObject(data);
 
                 } else if (obj.getType() == 4) {
+                    
                     byte[] bytes = new byte[echoLengthString];
                     int len;
 
                     while ((len = endianStream.read(bytes)) > 0) {
                         String data = new String(bytes, 0, len);
-                        System.out.println("Data: " + data);
                         return new DataObject(data);
                     }
 
                 } else if (obj.getType() == 5) {
 
                     long data = endianStream.readLong();
-                    System.out.println(data);
                     return new DataObject(data);
 
                 } else {
 
-                    System.out.println("Not supported");
+                    // This should never happen, but just in case :)
+                    System.out.println("Data type supported (getState() error)");
                     return new DataObject();
 
                 }
             }
 
         } catch (SocketTimeoutException e) {
-            System.out.println("No data was returned");
+            System.out.println("No data was returned (Socket timed out)");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -308,7 +296,6 @@ public class InfiniteFlightConnectAPI {
 
     /**
      * Gets the manifest from the API via TCP
-     * 
      * @return and ArrayList of ManifestObjects, if there are no errors
      */
     public ArrayList<ManifestObject> getManifest() {
@@ -361,7 +348,6 @@ public class InfiniteFlightConnectAPI {
                     if (isFirstLine) {
 
                         // Make a pattern and match all specials
-                        System.out.println("First line is here");
                         Pattern p = Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE);
                         Matcher m = p.matcher("�");
                         boolean b = m.find();
@@ -384,7 +370,7 @@ public class InfiniteFlightConnectAPI {
                             putPath = s;
                         i += 1;
                     } catch (NumberFormatException e) {
-                        System.out.println("Misread a line of the manifest:" + s);
+                        System.out.println("Misread a line of the manifest: " + s);
                     }
                 }
 
