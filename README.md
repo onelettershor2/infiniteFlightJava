@@ -10,7 +10,7 @@ Implementing this into your project is quite simple!
    - Under **_Libraries_** tab... ```Add External JARs```
    - Find this repo's .jar file
    - Press **_OK_** then your done!
-   - Still need more help? Visit [this](https://www.tutorialspoint.com/eclipse/eclipse_java_build_path.htm) page for a little more explanation
+   - Still need more help? Visit [this](https://www.tutorialspoint.com/eclipse/eclipse_java_build_path.htm) page for a little more explanation, or [message me](#getting-a-jar-file)
 
 3. You are almost done! View the example code under the **example** branch to see the basic setup.
 
