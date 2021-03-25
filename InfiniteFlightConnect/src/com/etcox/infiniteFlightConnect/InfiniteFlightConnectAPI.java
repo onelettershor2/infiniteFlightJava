@@ -34,9 +34,6 @@ public class InfiniteFlightConnectAPI {
 
     public void startConnection(String ip, int port) {
         try {
-
-            System.out.println("Starting Connection");
-
             // Create a socket on specified port an ip
             clientSocket = new Socket(ip, port);
 
@@ -52,14 +49,10 @@ public class InfiniteFlightConnectAPI {
             // Another form of getting data from the socket (one currently in
             // use)
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
-
-            System.out.println("System made it here, so far.");
-
+            
             // Put the strings into a string array list and
             // May put it in an object in the future
             mani = getManifest();
-
-            sendCommand(1048598);
 
             /*
              * ManifestObject idObj =
@@ -94,8 +87,7 @@ public class InfiniteFlightConnectAPI {
      * Send a command to the Infinite Flight client; This is sort of old an
      * unreliable but it works
      * 
-     * @param id
-     *            Command ID to send
+     * @param id Command ID to send
      */
     public void sendCommand(int id) {
         try {
@@ -112,11 +104,9 @@ public class InfiniteFlightConnectAPI {
     /**
      * Set a state to the Infinite Flight client
      * 
-     * @param id
-     *            the path of the state to set
-     * @param toParse
-     *            The corresponding datatype of the ID in it's string format (Is
-     *            parsed into the correct type automatically)
+     * @param id the path of the state to set
+     * @param toParse The corresponding datatype of the ID in it's string format (Is
+     * parsed into the correct type automatically)
      */
     public void setState(String path, String toParse) {
         ManifestObject obj = getManifestObjectFromPath(path);
@@ -128,11 +118,9 @@ public class InfiniteFlightConnectAPI {
     /**
      * Set a state to the Infinite Flight client
      * 
-     * @param id
-     *            the ID of the state to set
-     * @param toParse
-     *            The corresponding datatype of the ID in it's string format (Is
-     *            parsed into the correct type automatically)
+     * @param id the ID of the state to set
+     * @param toParse The corresponding datatype of the ID in it's string format (Is
+     * parsed into the correct type automatically)
      */
     public void setState(int id, String toParse) {
 
@@ -192,8 +180,7 @@ public class InfiniteFlightConnectAPI {
     /**
      * Get a state from the API
      * 
-     * @param path
-     *            the path of the state to retrive
+     * @param path the path of the state to get
      * @return a DataObject which holds the corresponding value
      */
     public DataObject getState(String path) {
@@ -206,8 +193,7 @@ public class InfiniteFlightConnectAPI {
     /**
      * Get a state from the API
      * 
-     * @param id
-     *            the ID of the state to retrive
+     * @param id the ID of the state to get
      * @return a DataObject which holds the corresponding value
      */
     public DataObject getState(int id) {
@@ -398,36 +384,28 @@ public class InfiniteFlightConnectAPI {
                             putPath = s;
                         i += 1;
                     } catch (NumberFormatException e) {
-                        System.out.println("Misread a line of the manifest.");
+                        System.out.println("Misread a line of the manifest:" + s);
                     }
-
                 }
 
                 if (putID != -2 && putType != -2 && putPath != null) {
                     toReturn.add(new ManifestObject(putID, putType, putPath));
                 }
-
             }
 
         } catch (SocketTimeoutException e) {
-
             // Nothing more to read from the manifest
-            System.out.println("Finished obtaining the manifest, timed-out");
             return toReturn;
-
         } catch (IOException e) {
-
             e.printStackTrace();
             return null;
-
         }
     }
 
     /**
      * Get a manifest object from the array list using an index
      * 
-     * @param index
-     *            the index to return
+     * @param index the index to return
      * @return ManifestObject at specified index
      */
     public ManifestObject getManifestObject(int index) {
@@ -437,8 +415,7 @@ public class InfiniteFlightConnectAPI {
     /**
      * try and locate an object from a specific path
      * 
-     * @param path
-     *            path to search for
+     * @param path to search for
      * @return null or an object based on if there is a path or not
      */
     public ManifestObject getManifestObjectFromPath(String path) {
@@ -453,8 +430,7 @@ public class InfiniteFlightConnectAPI {
     /**
      * try and locate an object from a specific id
      * 
-     * @param id
-     *            id to search for
+     * @param id to search for
      * @return null or an object based on if there is a path or not
      */
     public ManifestObject getManifestObjectFromID(int id) {
@@ -475,8 +451,7 @@ public class InfiniteFlightConnectAPI {
     /**
      * try an locate an object from a specific type
      * 
-     * @param type
-     *            type to search for
+     * @param type to search for
      * @return null or an object based on if there is a path or not
      */
     public ManifestObject getManifestObjectFromType(int type) {
@@ -488,24 +463,24 @@ public class InfiniteFlightConnectAPI {
         return null;
     }
 
-    public float convertMetersPerSecondToFeetPerMinute(float ms) {
+    public static float convertMetersPerSecondToFeetPerMinute(float ms) {
         return ms * 196.85f;
     }
 
-    public float convertMetersPerSecondToKnots(float ms) {
+    public static float convertMetersPerSecondToKnots(float ms) {
         return ms * 1.94384f;
     }
 
-    public int convertRadianToDegree(float r) {
+    public static int convertRadianToDegree(float r) {
         float val = r * 57.29580406904963f;
         return Math.round(val);
     }
 
-    public float convertKGSToLBS(float kgs) {
+    public static float convertKGSToLBS(float kgs) {
         return kgs * 2.20462f;
     }
 
-    public float convertDegreeToRadian(float d) {
+    public static float convertDegreeToRadian(float d) {
         return d * 0.0174533f;
     }
 
@@ -513,8 +488,7 @@ public class InfiniteFlightConnectAPI {
      * Converts a Big Endian float into a Little Endian float which is needed to
      * communicate with the API
      * 
-     * @param f
-     *            the float value to convert
+     * @param f the float value to convert
      * @return a Little Endian float
      */
     public static float reverseFloat(float f) {
@@ -532,12 +506,10 @@ public class InfiniteFlightConnectAPI {
     public void stopConnection() {
         // close the connections and such
         try {
-            System.out.println("Stopping the connection");
             in.close();
             out.close();
             clientSocket.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
