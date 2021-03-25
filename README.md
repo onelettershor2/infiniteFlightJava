@@ -123,5 +123,6 @@ So... Java does not, by default, send format in the [Little Endian](https://en.w
 - I will try my best to continue and update this when I feel needed 
 - If you have any issues please don't hesitate to ask me on the [Infinite Flight Community](https://community.infiniteflight.com/u/onelettershor2/) or open an issue here on GitHub.
 
-### Getting a .jar file
+## Getting a .jar file
 Need extra help getting the .jar? Check [this](https://stackoverflow.com/questions/41310629/how-to-download-jar-file-from-github-source-code) out! If you still need help message me on the [Infinite Flight Community](https://community.infiniteflight.com/u/onelettershor2/)
+
