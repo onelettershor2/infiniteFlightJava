@@ -18,7 +18,7 @@ Implementing this into your project is quite simple!
 So ontop of the basic getting of data, I included some more methods to ease the conversion proccess of data. (The API returns some not so normal numbers ex: m/s, radians, etc.)
 
 To help with this, I included some static methods to convert. 
-**_Note: conversions are based on formulas Google uses_**
+**_Note: conversions are based on formulas Google uses_** <br>
 **_Another Note: sorry if you were hoping for metric conversions, but I did these all based off Imperial_**
 
 ```
