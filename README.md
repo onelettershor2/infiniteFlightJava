@@ -54,7 +54,7 @@ Add this using the steps below:
    - Under **_Libraries_** tab... ```Add External JARs```
    - Find this repo's .jar file
    - Press **_OK_** then your done!
-   - Still need more help? Visit [this](https://www.tutorialspoint.com/eclipse/eclipse_java_build_path.htm) page for a little more explanation, or [message me](#getting-a-jar-file)
+   - Still need more help? Visit [this](https://www.tutorialspoint.com/eclipse/eclipse_java_build_path.htm) page for a little more explanation, or [message me](#help)
 
 3. You are almost done! View the example code under the **example** branch to see the basic setup.
 
@@ -79,12 +79,12 @@ Due to the nature of not being able to have multiple return types from the exact
 DataObject - Used to store data retrived from the Connect API
    - Stores all data types, but only one will be accurate based on the API result
    - It can store a boolean, int, float, double, String, and long
-   - to get the type of data it is storing, use: DataObject.getDataType() which will return a corresponding integer based off the Offical Infinite Flight Docs
+   - to get the type of data it is storing, use: DataObject.getDataType() which will return a corresponding integer based off the offical Infinite Flight Docs
    - to get the data stored within the object, use: DataObject.getData{INTEGER}() INTEGER being the corresponding data type stored
 ```
 ```
 ManifestObject - Stores a single manifest entry in it
-   - Stores Path(path), ID(id), and Data Type (type)
+   - Stores Path(path), ID(id), and Data Type(type)
    - to get the path, use: ManifestObject.getPath()
    - to get the id, use: ManifestObject.getID()
    - to get the type, use: ManifestObject.getType()
@@ -105,7 +105,7 @@ getManifestObjectFromID(int id)
     - If it exist, will return a ManifestObject with the corresponding id
 ```
 ```
-(Deprecated) getManifestObjectFromID(int type) 
+(Deprecated) getManifestObjectFromType(int type) 
     - If it exist, will return the first ManifestObject found with the corresponding type
 ```
 
