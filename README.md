@@ -32,6 +32,16 @@ To help with this, I included some static methods to convert. <br>
 - convertKGSToLBS(float kgs)
 - convertDegreeToRadian(float d)
 ```
+## Objects
+Due to the nature of not being able to have multiple return types from the exact same method, I figured I would try something new and create objects for data and also for manifest stuff. There are currently two types of objects: **DataObject** and **ManifestObject**
+
+```
+- DataObject
+```
+```
+- ManifestObject
+```
+
 ## Some methods not in the example
 
 ```
