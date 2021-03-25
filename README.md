@@ -37,7 +37,8 @@ Here are some of the endpoints I have found are easier to use when converted
 | aircraft/0/indicated_airspeed      | IAS | m/s to knots |
 | aircraft/0/vertical_speed      | VS      |  m/s to FPM |
 | aircraft/0/heading_magnetic | Heading      |    radian to degree | 
-| aircraft/0/oat | OAT | celcius to farenheight | <br>
+| aircraft/0/oat | OAT | celcius to farenheight |
+<br>
 **Of course these are not all of them, just an example**
 
 
