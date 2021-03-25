@@ -36,10 +36,18 @@ To help with this, I included some static methods to convert. <br>
 Due to the nature of not being able to have multiple return types from the exact same method, I figured I would try something new and create objects for data and also for manifest stuff. There are currently two types of objects: **DataObject** and **ManifestObject**
 
 ```
-- DataObject
+DataObject - Used to store data retrived from the Connect API
+   - Stores all data types, but only one will be accurate based on the API result
+   - It can store a boolean, int, float, double, String, and long
+   - to get the type of data it is storing, use: DataObject.getDataType() which will return a corresponding integer based off the Offical Infinite Flight Docs
+   - to get the data stored within the object, use: DataObject.getData{INTEGER}() INTEGER being the corresponding data type stored
 ```
 ```
-- ManifestObject
+ManifestObject - Stores a single manifest entry in it
+   - Stores Path(path), ID(id), and Data Type (type)
+   - to get the path, use: ManifestObject.getPath()
+   - to get the id, use: ManifestObject.getID()
+   - to get the type, use: ManifestObject.getType()
 ```
 
 ## Some methods not in the example
