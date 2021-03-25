@@ -35,10 +35,14 @@ To help with this, I included some static methods to convert. <br>
 ## Some methods not in the example
 
 ```
-- getManifestObject(int index) This will return a ManifestObject from the ArrayList<ManifestObject> that was created on init
-- getManifestObjectFromPath(String path) If it exist, will return a ManifestObject with the corresponding path
-- getManifestObjectFromID(int id) If it exist, will return a ManifestObject with the corresponding id
-- (Deprecated) getManifestObjectFromID(int type) If it exist, will return the first ManifestObject found with the corresponding type
+- getManifestObject(int index) 
+    - This will return a ManifestObject from the ArrayList<ManifestObject> that was created on init
+- getManifestObjectFromPath(String path) 
+    - If it exist, will return a ManifestObject with the corresponding path
+- getManifestObjectFromID(int id)
+    - If it exist, will return a ManifestObject with the corresponding id
+- (Deprecated) getManifestObjectFromID(int type) 
+    - If it exist, will return the first ManifestObject found with the corresponding type
 ```
 
 ## Endpoints that may need converting
