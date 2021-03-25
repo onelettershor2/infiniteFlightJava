@@ -54,26 +54,6 @@ public class InfiniteFlightConnectAPI {
             // May put it in an object in the future
             mani = getManifest();
 
-            /*
-             * ManifestObject idObj =
-             * getManifestObjectFromPath("aircraft/0/systems/signs/seatbelt");
-             * 
-             * int id = -1;
-             * 
-             * if(idObj != null) id = idObj.getID(); //343 //341 //542
-             * 
-             * ManifestObject o = getManifestObjectFromID(id); if(o == null){
-             * System.out.println("null object"); }else{
-             * System.out.println("Path: " + o.getPath());
-             * System.out.println("ID: "+ o.getID());
-             * System.out.println("Type: " + o.getType()); }
-             * 
-             * //Send message of specified id. Does not take a variable in for
-             * the time being sendCommand(1048598); sendCommand(1048600);
-             * sendCommand(1048601); sendCommand(1048649); setState(id, "true");
-             * getState(id);
-             */
-
         } catch (ConnectException e) {
             System.out.println("Could not make a socket connection");
         } catch (UnknownHostException e) {
@@ -436,10 +416,10 @@ public class InfiniteFlightConnectAPI {
 
     /**
      * try an locate an object from a specific type
-     * 
      * @param type to search for
      * @return null or an object based on if there is a path or not
      */
+    @Deprecated
     public ManifestObject getManifestObjectFromType(int type) {
         for (ManifestObject m : mani) {
             if (m.getType() == type) {
