@@ -39,9 +39,10 @@ Here are some of the endpoints I have found are easier to use when converted
 | aircraft/0/heading_magnetic | Heading      |    radian to degree | 
 | aircraft/0/oat | OAT | celcius to farenheight |
 
-**Of course these are not all of them, just an example**
+**Of course these are not all of them, just some examples**
 
-
+### Extra info
+So... Java does not, by default, send data in the Little Endian format. To get around this, you have to do some low level stuff. To save some time, and keep me half-sain, I used a file from [here]. Credit to the creator for the useful converter. The JSON for Java library was also not created by me. (The only need for it is to get the IP from the JSON returned in the UDP broadcast)
 
 ### Getting a .jar file
 
