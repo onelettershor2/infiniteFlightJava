@@ -48,7 +48,7 @@ Implementing this into your project is quite simple!
 This project is dependent on [this](https://search.maven.org/remotecontent?filepath=org/json/json/20210307/json-20210307.jar) (JSON for Java)
 Add this using the steps below:
 
-1. Download the .jar file which will be needed to refrence this repo. [download](https://github.com/onelettershor2/infiniteFlightJava/raw/master/infiniteFlightJavav1.0.0.jar)
+1. Download the .jar file which will be needed to refrence this repo. [download](https://github.com/onelettershor2/infiniteFlightJava/raw/master/infiniteFlightJavav1.0.0.jar) (Make sure and download the one above as well!)
 2. - Under **_Package Explorer_** right click the project you would like to use this in.
    - Hover ```Build Path -> Configure Build Path```
    - Under **_Libraries_** tab... ```Add External JARs```
